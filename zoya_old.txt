@@ -1,0 +1,151 @@
+    androidx.compose.material3.Scaffold(
+        topBar = {
+            androidx.compose.material3.TopAppBar(
+                title = { Text("Z.O.Y.A.", color = Color.White) },
+                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                actions = {
+                    androidx.compose.material3.IconButton(onClick = { showMenu = !showMenu }) {
+                        Text("⚙", color = Color.White, fontSize = 24.sp)
+                    }
+                    androidx.compose.material3.DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false },
+                        modifier = Modifier.background(Color.White.copy(alpha = 0.1f))
+                    ) {
+                        androidx.compose.material3.DropdownMenuItem(
+                            text = { Text("View Logs", color = Color.White) },
+                            onClick = {
+                                showMenu = false
+                                onNavigateToChat()
+                            }
+                        )
+                        androidx.compose.material3.DropdownMenuItem(
+                            text = { Text("Accessibility Settings (Auto-Click)", color = Color.White) },
+                            onClick = {
+                                showMenu = false
+                                val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                context.startActivity(intent)
+                            }
+                        )
+                    }
+                }
+            )
+        },
+        containerColor = Color.Transparent
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    androidx.compose.ui.graphics.Brush.verticalGradient(
+                        colors = listOf(Color(0xFF1E1332), Color(0xFF100B1C))
+                    )
+                )
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(24.dp)
+                    .background(
+                        color = Color.White.copy(alpha = 0.05f),
+                        shape = RoundedCornerShape(0.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(0.dp)
+                    )
+                    .padding(32.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                ZoyaOrb(state = zoyaState)
+                
+                Spacer(modifier = Modifier.height(60.dp))
+
+                if (!serviceStarted) {
+                    androidx.compose.material3.Button(
+                        modifier = Modifier.testTag("start_zoya_button"),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = Color.White.copy(alpha = 0.15f),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(0.dp),
+                        onClick = {
+                            val hasMic = ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                            val hasContacts = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                            val hasPhone = ContextCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                            
+                            if (hasMic && hasContacts && hasPhone) {
+                                val intent = Intent(context, ZoyaForegroundService::class.java)
+                                ContextCompat.startForegroundService(context, intent)
+                                serviceStarted = true
+                            } else {
+                                permissionLauncher.launch(
+                                    arrayOf(
+                                        android.Manifest.permission.RECORD_AUDIO,
+                                        android.Manifest.permission.READ_CONTACTS,
+                                        android.Manifest.permission.CALL_PHONE
+                                    )
+                                )
+                            }
+                        }
+                    ) {
+                        Text("Start Zoya")
+                    }
+                } else if (zoyaState == ZoyaState.IDLE) {
+                    androidx.compose.material3.Button(
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = Color.White.copy(alpha = 0.15f),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(0.dp),
+                        onClick = {
+                            val service = ZoyaForegroundService.activeService
+                            if (service != null) {
+                                service.reconnectSession()
+                            } else {
+                                val intent = Intent(context, ZoyaForegroundService::class.java)
+                                ContextCompat.startForegroundService(context, intent)
+                            }
+                        }
+                    ) {
+                        Text("Reconnect Session")
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(context, ZoyaForegroundService::class.java)
+                            context.stopService(intent)
+                            serviceStarted = false
+                        },
+                        colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFFEF4444)
+                        ),
+                        border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(0.dp)
+                    ) {
+                        Text("Stop Zoya")
+                    }
+                } else {
+                    Text(
+                        text = when (zoyaState) {
+                            ZoyaState.LISTENING -> "Listening..."
+                            ZoyaState.THINKING -> "Thinking..."
+                            ZoyaState.SPEAKING -> "Speaking..."
+                            else -> ""
+                        },
+                        color = Color.Cyan.copy(alpha = 0.7f),
+                        fontSize = 16.sp
+                    )
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    OutlinedButton(

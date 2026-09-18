@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Cyan Ring -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,18 C73.33,18 89,33.67 89,53 C89,72.33 73.33,88 54,88 C34.67,88 19,72.33 19,53 C19,33.67 34.67,18 54,18 Z"
+        android:strokeWidth="3.5"
+        android:strokeColor="#00E5FF" />
+    
+    <!-- Inner Purple/Neon Core Ring -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,28 C67.8,28 79,39.2 79,53 C79,66.8 67.8,78 54,78 C40.2,78 29,66.8 29,53 C29,39.2 40.2,28 54,28 Z"
+        android:strokeWidth="2"
+        android:strokeColor="#7C4DFF" />
+
+    <!-- Central Glowing Voice Wave / Sparkle Symbol -->
+    <path
+        android:fillColor="#FF0055"
+        android:pathData="M54,38 L57.5,47.5 L67,51 L57.5,54.5 L54,64 L50.5,54.5 L41,51 L50.5,47.5 Z" />
+    
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M68,36 L69.5,40 L73.5,41.5 L69.5,43 L68,47 L66.5,43 L62.5,41.5 L66.5,40 Z" />
+
+    <path
+        android:fillColor="#FFFF00"
+        android:pathData="M40,63 L41,66 L44,67 L41,68 L40,71 L39,68 L36,67 L39,66 Z" />
+</vector>

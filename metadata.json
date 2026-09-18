@@ -1,0 +1,8 @@
+{
+  "name": "Joy Assistant",
+  "description": "A real-time, background-running voice assistant named Joy using Gemini Live.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Joy Assistant</string>
+    <string name="accessibility_service_description">Allows Joy to automatically click buttons like the Send message button in WhatsApp for you.</string>
+</resources>
